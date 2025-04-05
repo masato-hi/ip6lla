@@ -1,3 +1,11 @@
+use clap::Parser;
+use cli::CLI;
+
+mod cli;
+mod eui;
+mod ipv6;
+
 fn main() {
-    println!("Hello, world!");
+    let cli = CLI::parse();
+    cli.run();
 }
