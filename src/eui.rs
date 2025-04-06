@@ -344,19 +344,19 @@ mod tests {
     fn test_eui48_parse() {
         // colon-separated upper
         let value = EUI48::parse("01:00:5E:90:10:FF").unwrap();
-        assert_eq!("01-00-5E-90-10-FF", value.to_string());
+        assert_eq!("01-00-5e-90-10-ff", value.to_string());
 
         // colon-separated lower
         let value = EUI48::parse("01:00:5e:90:10:ff").unwrap();
-        assert_eq!("01-00-5E-90-10-FF", value.to_string());
+        assert_eq!("01-00-5e-90-10-ff", value.to_string());
 
         // hyphenated upper
         let value = EUI48::parse("01-00-5E-90-10-FF").unwrap();
-        assert_eq!("01-00-5E-90-10-FF", value.to_string());
+        assert_eq!("01-00-5e-90-10-ff", value.to_string());
 
         // hyphenated lower
         let value = EUI48::parse("01-00-5e-90-10-ff").unwrap();
-        assert_eq!("01-00-5E-90-10-FF", value.to_string());
+        assert_eq!("01-00-5e-90-10-ff", value.to_string());
 
         // invalid length
         assert_eq!(
@@ -386,26 +386,26 @@ mod tests {
     #[test]
     fn test_eui48_hyphenated() {
         let value = EUI48::parse("01-00-5E-90-10-FF").unwrap();
-        assert_eq!("01-00-5E-90-10-FF", value.hyphenated());
+        assert_eq!("01-00-5e-90-10-ff", value.hyphenated());
     }
 
     #[test]
     fn test_eui48_colon_separated() {
         let value = EUI48::parse("01-00-5E-90-10-FF").unwrap();
-        assert_eq!("01:00:5E:90:10:FF", value.colon_separated());
+        assert_eq!("01:00:5e:90:10:ff", value.colon_separated());
     }
 
     #[test]
     fn test_eui64_from_eui48() {
         let value: EUI64 = EUI48::parse("01-00-5E-90-10-FF").unwrap().into();
-        assert_eq!("01-00-5E-FF-FE-90-10-FF", value.to_string());
+        assert_eq!("01-00-5e-ff-fe-90-10-ff", value.to_string());
     }
 
     #[test]
     fn test_eui64_to_eui48() {
         let eui64: EUI64 = "01-00-5E-FF-FE-90-10-FF".parse().unwrap();
         let eui48: EUI48 = eui64.try_into().unwrap();
-        assert_eq!("01-00-5E-90-10-FF", eui48.to_string());
+        assert_eq!("01-00-5e-90-10-ff", eui48.to_string());
     }
 
     #[test]
@@ -418,13 +418,13 @@ mod tests {
     fn test_ipv6_to_eui64() {
         let ipv6: IPv6 = "fe80::300:5eff:fe90:10ff".parse().unwrap();
         let value: EUI64 = ipv6.try_into().unwrap();
-        assert_eq!("01-00-5E-FF-FE-90-10-FF", value.to_string());
+        assert_eq!("01-00-5e-ff-fe-90-10-ff", value.to_string());
     }
 
     #[test]
     fn test_ipv6_to_eui48() {
         let ipv6: IPv6 = "fe80::300:5eff:fe90:10ff".parse().unwrap();
         let value: EUI48 = ipv6.try_into().unwrap();
-        assert_eq!("01-00-5E-90-10-FF", value.to_string());
+        assert_eq!("01-00-5e-90-10-ff", value.to_string());
     }
 }
