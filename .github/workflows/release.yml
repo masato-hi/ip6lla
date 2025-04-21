@@ -21,15 +21,12 @@ jobs:
             target/
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-      - name: Set version
-        id: version
+      - name: Set environment variable
         run: |
-          REPOSITORY=$(echo ${{ github.repository }} | sed -e "s#.*/##")
+          PACKAGE_NAME=$(echo ${{ github.repository }} | sed -e "s#.*/##")
           VERSION=$(echo ${{ github.ref }} | sed -e "s#refs/tags/##g")
-          echo ::set-output name=version::$VERSION
-          echo ::set-output name=repository::$REPOSITORY
-          echo ::set-output name=filename::$REPOSITORY-$VERSION
-          echo "Version $VERSION"
+          echo "PACKAGE_NAME=${PACKAGE_NAME}" >> "$GITHUB_ENV"
+          echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
 
       - name: Run tests
         run: cargo test
@@ -40,17 +37,17 @@ jobs:
       - name: Upload release artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.version.outputs.filename }}-${{ matrix.BUILD_TARGET }}.zip
-          path: target/${{ matrix.BUILD_TARGET }}/release/${{ steps.version.outputs.repository }}
+          name: ${{ env.PACKAGE_NAME }}-${{ env.VERSION }}-${{ matrix.BUILD_TARGET }}.zip
+          path: target/${{ matrix.BUILD_TARGET }}/release/${{ env.PACKAGE_NAME }}
 
       - name: Download release artifact
         uses: actions/download-artifact@v4
         with:
-          name: ${{ steps.version.outputs.filename }}-${{ matrix.BUILD_TARGET }}.zip
-          path: ./build/${{ steps.version.outputs.filename }}-${{ matrix.BUILD_TARGET }}.zip
+          name: ${{ env.PACKAGE_NAME }}-${{ env.VERSION }}-${{ matrix.BUILD_TARGET }}.zip
+          path: ./build/${{ env.PACKAGE_NAME }}-${{ env.VERSION }}-${{ matrix.BUILD_TARGET }}.zip
 
       - name: Publish built binary to GitHub releases
         run: |
-          gh release create --generate-notes ./build/*
+          gh release create ${VERSION} --generate-notes ./build/*
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
