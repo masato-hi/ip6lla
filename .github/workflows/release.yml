@@ -1,0 +1,51 @@
+on: push
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        BUILD_TARGET: [x86_64-unknown-linux-gnu]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Set version
+        id: version
+        run: |
+          REPOSITORY=$(echo ${{ github.repository }} | sed -e "s#.*/##")
+          VERSION=$(echo ${{ github.ref }} | sed -e "s#refs/tags/##g")
+          echo ::set-output name=version::$VERSION
+          echo ::set-output name=repository::$REPOSITORY
+          echo ::set-output name=filename::$REPOSITORY-$VERSION
+          echo "Version $VERSION"
+
+      - name: Run tests
+        run: cargo test
+
+      - name: Build
+        run: cargo build --release --target ${{ matrix.BUILD_TARGET }}
+
+      - name: Upload release artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.version.outputs.filename }}-${{ matrix.BUILD_TARGET }}
+          path: target/${{ matrix.BUILD_TARGET }}/release/${{ steps.version.outputs.repository }}
+
+      - name: Download release artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ steps.version.outputs.filename }}-${{ matrix.BUILD_TARGET }}
+          path: ./build/${{ steps.version.outputs.filename }}-${{ matrix.BUILD_TARGET }}
+
+      - name: Publish built binary to GitHub releases
+        run: |
+          gh release create --generate-notes ./build/*
