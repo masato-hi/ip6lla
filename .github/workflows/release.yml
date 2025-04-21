@@ -46,8 +46,8 @@ jobs:
           name: ${{ env.PACKAGE_NAME }}-${{ env.VERSION }}-${{ matrix.BUILD_TARGET }}.zip
           path: ./build/${{ env.PACKAGE_NAME }}-${{ env.VERSION }}-${{ matrix.BUILD_TARGET }}.zip
 
-      - name: Publish built binary to GitHub releases
+      - name: Upload built binary to GitHub releases
         run: |
-          gh release create ${VERSION} --generate-notes ./build/*
+          gh release upload ${VERSION} ./build/*
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
