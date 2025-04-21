@@ -48,9 +48,10 @@ jobs:
 
       - name: Compress release artifact
         run: |
-          ARTIFACT_NAME="${{ env.PACKAGE_NAME }}-${{ env.VERSION }}-${{ matrix.BUILD_TARGET }}"
+          BASENAME="${{ env.PACKAGE_NAME }}-${{ env.VERSION }}-${{ matrix.BUILD_TARGET }}"
           mkdir -p ./releases/
-          tar -zcf "./releases/${ARTIFACT_NAME}.tar.gz" -C "./artifacts/${ARTIFACT_NAME}" $(ls -A "./artifacts/${ARTIFACT_NAME}")
+          chmod +x "./artifacts/${BASENAME}/${PACKAGE_NAME}"
+          tar -zcf "./releases/${BASENAME}.tar.gz" -C "./artifacts/${BASENAME}" $(ls -A "./artifacts/${BASENAME}")
 
       - name: Upload built binary to GitHub releases
         run: |
