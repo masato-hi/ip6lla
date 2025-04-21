@@ -40,15 +40,17 @@ jobs:
       - name: Upload release artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.version.outputs.filename }}-${{ matrix.BUILD_TARGET }}
+          name: ${{ steps.version.outputs.filename }}-${{ matrix.BUILD_TARGET }}.zip
           path: target/${{ matrix.BUILD_TARGET }}/release/${{ steps.version.outputs.repository }}
 
       - name: Download release artifact
         uses: actions/download-artifact@v4
         with:
-          name: ${{ steps.version.outputs.filename }}-${{ matrix.BUILD_TARGET }}
-          path: ./build/${{ steps.version.outputs.filename }}-${{ matrix.BUILD_TARGET }}
+          name: ${{ steps.version.outputs.filename }}-${{ matrix.BUILD_TARGET }}.zip
+          path: ./build/${{ steps.version.outputs.filename }}-${{ matrix.BUILD_TARGET }}.zip
 
       - name: Publish built binary to GitHub releases
         run: |
           gh release create --generate-notes ./build/*
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
