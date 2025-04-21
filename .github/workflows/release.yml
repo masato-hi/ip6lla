@@ -37,17 +37,23 @@ jobs:
       - name: Upload release artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.PACKAGE_NAME }}-${{ env.VERSION }}-${{ matrix.BUILD_TARGET }}.zip
+          name: ${{ env.PACKAGE_NAME }}-${{ env.VERSION }}-${{ matrix.BUILD_TARGET }}
           path: target/${{ matrix.BUILD_TARGET }}/release/${{ env.PACKAGE_NAME }}
 
       - name: Download release artifact
         uses: actions/download-artifact@v4
         with:
-          name: ${{ env.PACKAGE_NAME }}-${{ env.VERSION }}-${{ matrix.BUILD_TARGET }}.zip
-          path: ./build/${{ env.PACKAGE_NAME }}-${{ env.VERSION }}-${{ matrix.BUILD_TARGET }}.zip
+          name: ${{ env.PACKAGE_NAME }}-${{ env.VERSION }}-${{ matrix.BUILD_TARGET }}
+          path: ./artifacts/${{ env.PACKAGE_NAME }}-${{ env.VERSION }}-${{ matrix.BUILD_TARGET }}
+
+      - name: Compress release artifact
+        run: |
+          ARTIFACT_NAME="${{ env.PACKAGE_NAME }}-${{ env.VERSION }}-${{ matrix.BUILD_TARGET }}"
+          mkdir -p ./releases/
+          tar -zcf "./releases/${ARTIFACT_NAME}.tar.gz" -C "./artifacts/${ARTIFACT_NAME}" $(ls -A "./artifacts/${ARTIFACT_NAME}")
 
       - name: Upload built binary to GitHub releases
         run: |
-          gh release upload ${VERSION} ./build/*
+          gh release upload ${VERSION} ./releases/*
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
