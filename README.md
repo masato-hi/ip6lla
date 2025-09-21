@@ -1,23 +1,24 @@
 # ip6lla
 
-CLI tool to convert IPv6 link-local addresses and MAC addresses to each other.
+Convert modified EUI-64 based IPv6 link-local addresses to MAC addresses each other.
 
 ## Usage
 
 ```text
-Usage: ip6lla [OPTIONS] <ADDRESS>
+Usage:
+  ip6lla [flags]
 
-Arguments:
-  <ADDRESS>  IPv6 or MAC Address
+Examples:
+ip6lla -u -c fe80::300:5eff:fe90:10ff
+ip6lla 01-00-5e-90-10-ff
 
-Options:
-  -c             Display colon-separated MAC address
-  -u             Display the address in uppercase
-  -h, --help     Print help
-  -V, --version  Print version
+Flags:
+  -c, --colon    display the MAC address in colon-separated
+  -h, --help     help for ip6lla
+  -u, --upcase   display the address in uppercase
 ```
 
-## Example
+## Examples
 
 ```shell
 $ ip6lla 01-00-5e-90-10-ff
