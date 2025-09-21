@@ -1,3 +1,5 @@
+name: Release
+
 on:
   push:
     tags:
@@ -6,55 +8,17 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        BUILD_TARGET: [x86_64-unknown-linux-gnu]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/cache@v4
+      - uses: actions/checkout@v5
+      - name: Set up Go
+        uses: actions/setup-go@v5
         with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-
-      - name: Set environment variable
-        run: |
-          PACKAGE_NAME=$(echo ${{ github.repository }} | sed -e "s#.*/##")
-          VERSION=$(echo ${{ github.ref }} | sed -e "s#refs/tags/##g")
-          echo "PACKAGE_NAME=${PACKAGE_NAME}" >> "$GITHUB_ENV"
-          echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
-
-      - name: Run tests
-        run: cargo test
-
-      - name: Build
-        run: cargo build --release --target ${{ matrix.BUILD_TARGET }}
-
-      - name: Upload release artifact
-        uses: actions/upload-artifact@v4
+          go-version: '1.25'
+          cache: true
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v6
         with:
-          name: ${{ env.PACKAGE_NAME }}-${{ env.VERSION }}-${{ matrix.BUILD_TARGET }}
-          path: target/${{ matrix.BUILD_TARGET }}/release/${{ env.PACKAGE_NAME }}
-
-      - name: Download release artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ env.PACKAGE_NAME }}-${{ env.VERSION }}-${{ matrix.BUILD_TARGET }}
-          path: ./artifacts/${{ env.PACKAGE_NAME }}-${{ env.VERSION }}-${{ matrix.BUILD_TARGET }}
-
-      - name: Compress release artifact
-        run: |
-          BASENAME="${{ env.PACKAGE_NAME }}-${{ env.VERSION }}-${{ matrix.BUILD_TARGET }}"
-          mkdir -p ./releases/
-          chmod +x "./artifacts/${BASENAME}/${PACKAGE_NAME}"
-          tar -zcf "./releases/${BASENAME}.tar.gz" -C "./artifacts/${BASENAME}" $(ls -A "./artifacts/${BASENAME}")
-
-      - name: Upload built binary to GitHub releases
-        run: |
-          gh release upload ${VERSION} ./releases/*
+          distribution: goreleaser
+          args: release --clean
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
