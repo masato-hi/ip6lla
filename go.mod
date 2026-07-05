@@ -1,4 +1,4 @@
-module github.com/masato-hi/ip6lla
+module github.com/masato-hi/ip6ula
 
 go 1.25.1
 

@@ -68,8 +68,8 @@ func (e EUI64Address) ToString() string {
 
 func (e EUI64Address) ToIPv6Address() (IPv6Address, error) {
 	slice := [16]byte{
-		0xfe,
-		0x80,
+		0xfd,
+		0x00,
 		0x00,
 		0x00,
 		0x00,

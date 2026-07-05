@@ -13,8 +13,9 @@ func (a IPv6Address) ToString() string {
 	return a.inner.String()
 }
 
-func (a IPv6Address) IsLinkLocalUnicast() bool {
-	return a.inner.IsLinkLocalUnicast()
+func (a IPv6Address) IsUniqueLocal() bool {
+	prefix := netip.MustParsePrefix("fd00::/8")
+	return prefix.Contains(a.inner)
 }
 
 func (a IPv6Address) ToEUI48Address() (EUI48Address, error) {
@@ -24,12 +25,12 @@ func (a IPv6Address) ToEUI48Address() (EUI48Address, error) {
 	}
 
 	if eui64.d != extensionIdentifierPrefixHigh {
-		return EUI48Address{}, errors.New("is not EUI-64 based link-local unicast address")
+		return EUI48Address{}, errors.New("is not EUI-64 based unique-local address")
 
 	}
 
 	if eui64.e != extensionIdentifierPrefixLow {
-		return EUI48Address{}, errors.New("is not EUI-64 based link-local unicast address")
+		return EUI48Address{}, errors.New("is not EUI-64 based unique-local address")
 	}
 
 	eui48 := EUI48Address{
@@ -45,8 +46,8 @@ func (a IPv6Address) ToEUI48Address() (EUI48Address, error) {
 }
 
 func (a IPv6Address) ToEUI64Address() (EUI64Address, error) {
-	if !a.IsLinkLocalUnicast() {
-		return EUI64Address{}, errors.New("is not link-local unicast address")
+	if !a.IsUniqueLocal() {
+		return EUI64Address{}, errors.New("is not unique-local address")
 	}
 
 	slice := a.inner.As16()

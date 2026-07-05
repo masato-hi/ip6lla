@@ -146,7 +146,7 @@ func TestEUI48Address_ToIPv6Address(t *testing.T) {
 	}
 
 	got := ipv6.ToString()
-	expected := "fe80::300:5eff:fe90:10ff"
+	expected := "fd00::300:5eff:fe90:10ff"
 
 	if got != expected {
 		t.Errorf("got %#v, want %#v", got, expected)

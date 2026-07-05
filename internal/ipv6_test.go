@@ -3,7 +3,7 @@ package internal
 import "testing"
 
 func TestIPv6Address_ToEUI64Address(t *testing.T) {
-	ipv6, err := ParseIPv6Address("fe80::300:5eff:fe90:10ff")
+	ipv6, err := ParseIPv6Address("fd00::300:5eff:fe90:10ff")
 	if err != nil {
 		t.Fatalf("unexpected error %#v", err)
 	}
@@ -22,7 +22,7 @@ func TestIPv6Address_ToEUI64Address(t *testing.T) {
 }
 
 func TestIPv6Address_ToEUI48Address(t *testing.T) {
-	ipv6, err := ParseIPv6Address("fe80::300:5eff:fe90:10ff")
+	ipv6, err := ParseIPv6Address("fd00::300:5eff:fe90:10ff")
 	if err != nil {
 		t.Fatalf("unexpected error %#v", err)
 	}

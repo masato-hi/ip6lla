@@ -3,7 +3,7 @@ package cmd
 import (
 	"os"
 
-	"github.com/masato-hi/ip6lla/internal"
+	"github.com/masato-hi/ip6ula/internal"
 	"github.com/spf13/cobra"
 )
 
@@ -12,10 +12,10 @@ func newRootCmd() cobra.Command {
 	var toUpperCase bool
 
 	rootCmd := cobra.Command{
-		Use:     "ip6lla",
-		Short:   "Convert IPv6 link-local addresses and MAC addresses each other.",
-		Long:    `Convert modified EUI-64 based IPv6 link-local addresses to MAC addresses each other.`,
-		Example: "ip6lla -u -c fe80::300:5eff:fe90:10ff\nip6lla 01-00-5e-90-10-ff",
+		Use:     "ip6ula",
+		Short:   "Convert IPv6 unique-local addresses and MAC addresses each other.",
+		Long:    `Convert modified EUI-64 based IPv6 unique-local addresses to MAC addresses each other.`,
+		Example: "ip6ula -u -c fd00::300:5eff:fe90:10ff\nip6ula 01-00-5e-90-10-ff",
 		Args:    cobra.MatchAll(cobra.ExactArgs(1)),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			address := args[0]
